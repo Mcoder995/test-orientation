@@ -1,5 +1,5 @@
 const fs = require("node:fs");
-const metiers = require("./metiers.json");
+const metiers = require("../metiers.json");
 
 const metiersWithH1 = metiers.map((metier) => metier.h1);
 
