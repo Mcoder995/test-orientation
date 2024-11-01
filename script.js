@@ -1,9 +1,9 @@
-import { jobsClassification, jobs } from "./category.js";
+import { jobsClassification, jobs, jobsLinks } from "./data/jobs.js";
 import {
 	functionalQuestions,
 	careerLevelQuestions,
 	competencyQuestions,
-} from "./questions.js";
+} from "./data/questions.js";
 
 // Génère les questions dans le formulaire
 function generateQuestions(sectionId, questions, type) {
@@ -100,6 +100,7 @@ function calculateResults() {
 		).length;
 		jobScores[job.jobId] = score;
 	}
+	console.log("jobScores: ", jobScores);
 
 	// Trie les métiers en fonction des scores
 	const sortedJobs = Object.entries(jobScores)
@@ -110,9 +111,31 @@ function calculateResults() {
 	const resultsDiv = document.getElementById("results");
 	const recommendedJobs = document.getElementById("recommended-jobs");
 	recommendedJobs.innerHTML = "";
+
 	for (const job of sortedJobs.slice(0, 5)) {
 		const jobItem = document.createElement("li");
-		jobItem.textContent = job;
+		jobItem.className = "flex items-center justify-between mb-2";
+
+		// Création du conteneur pour le métier et son score
+		const jobInfoDiv = document.createElement("div");
+		jobInfoDiv.textContent = `${job} (Score: ${jobScores[Object.keys(jobs).find((key) => jobs[key] === job)]})`;
+		jobItem.appendChild(jobInfoDiv);
+
+		// Création du lien "Voir plus"
+		const jobLink = document.createElement("a");
+		const jobId = Number.parseInt(
+			Object.keys(jobs).find((key) => jobs[key] === job),
+		);
+		const jobLinkData = jobsLinks.find((link) => link.id === jobId);
+
+		if (jobLinkData) {
+			jobLink.href = jobLinkData.url;
+			jobLink.textContent = "Voir plus";
+			jobLink.className = "text-blue-600 hover:text-blue-800 ml-4";
+			jobLink.target = "_blank";
+			jobItem.appendChild(jobLink);
+		}
+
 		recommendedJobs.appendChild(jobItem);
 	}
 	resultsDiv.classList.remove("hidden");
